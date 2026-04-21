@@ -2,6 +2,7 @@ import os
 import sys
 import pygame as pg
 import random
+import time
 
 WIDTH, HEIGHT = 1100, 650
 DELTA = {
@@ -26,6 +27,32 @@ def check_bound(rct:pg.Rect) -> tuple[bool,bool]:
         tate = False
     return yoko,tate
 
+def gameover(screen: pg.Surface) -> None:
+    """
+    引数：screen
+    戻り値：
+    こうかとんと爆弾が衝突したら呼び出す
+    """
+    black_img = pg.Surface((WIDTH,HEIGHT)) # 矩形の空のSurfaceを作る
+    pg.draw.rect(black_img,(0,0,0),(0,0,1100,650)) # 色範囲設定
+    black_img.set_alpha(100) # 矩形のSurfaceの透明度設定
+    fonto = pg.font.Font(None,80) # フォント
+    gameovertxt = fonto.render("Game Over",True,(255,255,255)) # テキスト内容
+    gameovertxt_rct = gameovertxt.get_rect() 
+    gameovertxt_rct.center = WIDTH/2,HEIGHT/2 # テキスト位置
+    black_img.blit(gameovertxt,gameovertxt_rct)
+    kokaton = pg.image.load("fig/8.png") # こうかとん画像ロード
+    kokaton_rct = kokaton.get_rect() 
+    kokaton_rct.center = WIDTH/4,HEIGHT/2 # こうかとん位置
+    kokaton_rct2 = kokaton.get_rect() # 
+    kokaton_rct2.center = WIDTH*3/4,HEIGHT/2 # こうかとん位置
+    black_img.blit(kokaton,kokaton_rct) 
+    black_img.blit(kokaton,kokaton_rct2) 
+    screen.blit(black_img,(0,0)) 
+    pg.display.update() # ５秒間停止
+    time.sleep(5)
+
+
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
@@ -49,8 +76,10 @@ def main():
         for event in pg.event.get():
             if event.type == pg.QUIT: 
                 return
-        if kk_rct.colliderect(bb_rct):
-            return    
+        if kk_rct.colliderect(bb_rct): # 衝突判定
+            gameover(screen)
+            return
+
 
         screen.blit(bg_img, [0, 0]) 
         
