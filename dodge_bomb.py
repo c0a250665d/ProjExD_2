@@ -4,6 +4,7 @@ import pygame as pg
 import random
 import time
 
+
 WIDTH, HEIGHT = 1100, 650
 DELTA = {
     pg.K_UP: (0, -5), # 上
@@ -12,7 +13,9 @@ DELTA = {
     pg.K_RIGHT: (+5, 0), # 右
 }
 
+
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
+
 
 def check_bound(rct:pg.Rect) -> tuple[bool,bool]:
     """
@@ -26,6 +29,7 @@ def check_bound(rct:pg.Rect) -> tuple[bool,bool]:
     if rct.top < 0 or HEIGHT < rct.bottom: #縦方向指定
         tate = False
     return yoko,tate
+
 
 def gameover(screen: pg.Surface) -> None:
     """
@@ -60,7 +64,6 @@ def main():
     kk_img = pg.transform.rotozoom(pg.image.load("fig/3.png"), 0, 0.9)
     kk_rct = kk_img.get_rect()
     kk_rct.center = 300, 200
-
     bb_img = pg.Surface((20,20)) # 爆弾用の空のSurfaceを作る
     pg.draw.circle(bb_img, (255,0,0),(10,10),10) # 爆弾円を描く
     bb_img.set_colorkey((0, 0, 0))  # 爆弾の黒い部分を透過させる
@@ -68,7 +71,6 @@ def main():
     bb_rct.centerx = random.randint(0,WIDTH) # 爆弾の初期横座標を設定する
     bb_rct.centery = random.randint(0,HEIGHT) # 爆弾の初期縦座標を設定する
     vx,vy = +5,+5 # 爆弾の速度
-
     clock = pg.time.Clock()
     tmr = 0
 
@@ -76,13 +78,12 @@ def main():
         for event in pg.event.get():
             if event.type == pg.QUIT: 
                 return
+            
         if kk_rct.colliderect(bb_rct): # 衝突判定
             gameover(screen)
             return
-
-
         screen.blit(bg_img, [0, 0]) 
-        
+
         key_lst = pg.key.get_pressed()
         sum_mv = [0, 0]
         
@@ -90,7 +91,6 @@ def main():
             if key_lst[key]:
                 sum_mv[0] += mv[0]
                 sum_mv[1] += mv[1] 
-                      
         kk_rct.move_ip(sum_mv)
         if check_bound(kk_rct) != (True,True): # 画面外だったら
             kk_rct.move_ip(-sum_mv[0],-sum_mv[1])
@@ -102,6 +102,7 @@ def main():
             vx *= -1
         if not tate:  # 縦方向の判定
             vy *= -1
+
         screen.blit(bb_img, bb_rct)  # 爆弾を表示させる
         pg.display.update()
         tmr += 1
